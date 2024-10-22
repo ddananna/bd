@@ -1,0 +1,133 @@
+SELECT * FROM passengers
+WHERE first_name = last_name;
+
+SELECT DISTINCT last_name FROM passengers;
+
+SELECT * FROM passengers
+WHERE gender = 'Male'
+AND date_of_birth BETWEEN '1990-01-01' AND '2000-12-31';
+
+SELECT DATE_TRUNC('month', created_at) AS month, SUM(price) AS total_sales FROM booking
+GROUP BY month
+ORDER BY month;
+
+SELECT f.* FROM flights f
+JOIN airport a ON f.arrival_airport_id = a.airport_id
+WHERE a.country = 'China';
+
+SELECT airline_name FROM airline
+WHERE airline_country = 'Kazakhstan';
+
+UPDATE booking SET price = price * 0.9
+WHERE created_at < '2010-12-12';
+
+SELECT * FROM baggage
+WHERE weight_in_kg > 25
+ORDER BY weight_in_kg DESC
+LIMIT 3;
+
+SELECT first_name, last_name FROM passengers
+ORDER BY date_of_birth DESC
+LIMIT 1;
+
+SELECT booking_platform, MIN(price) AS cheapest_price FROM booking
+GROUP BY booking_platform;
+
+SELECT UPPER(airline_name) AS airline_name_uppercase
+FROM airline;
+
+SELECT REPLACE(airline_name, 'Air', 'Aero') AS modified_airline_name
+FROM airline;
+
+SELECT flight_no FROM flights
+WHERE airline_id = 1
+INTERSECT
+SELECT flight_no FROM flights
+WHERE airline_id = 2;
+
+SELECT airport_name FROM airport
+WHERE airport_name LIKE '%Regional%' AND airport_name LIKE '%Air%';
+
+SELECT first_name, last_name, TO_CHAR(date_of_birth, 'Month DD, YYYY') AS formatted_birth_date FROM passengers;
+
+SELECT flight_no FROM flights
+WHERE actual_arrival > scheduled_arrival;
+
+SELECT first_name, last_name,
+CASE
+    WHEN AGE(date_of_birth) BETWEEN INTERVAL '18 years' AND INTERVAL '35 years' THEN 'Young'
+    WHEN AGE(date_of_birth) BETWEEN INTERVAL '36 years' AND INTERVAL '55 years' THEN 'Adult'
+END AS age_group FROM passengers;
+
+SELECT price,
+CASE
+    WHEN price < 100 THEN 'Cheap'
+    WHEN price BETWEEN 100 AND 500 THEN 'Medium'
+    ELSE 'Expensive'
+END AS price_category FROM booking;
+
+SELECT airline_country, COUNT(airline_name) AS airline_count FROM airline
+GROUP BY airline_country;
+
+SELECT flight_no FROM flights
+WHERE actual_arrival > scheduled_arrival;
+
+SELECT first_name, last_name, gender,
+    CASE
+        WHEN AGE(date_of_birth) BETWEEN INTERVAL '18 years' AND INTERVAL '35 years' AND gender = 'Male' THEN 'Young Male'
+        WHEN AGE(date_of_birth) BETWEEN INTERVAL '18 years' AND INTERVAL '35 years' AND gender = 'Female' THEN 'Young Female'
+        WHEN AGE(date_of_birth) BETWEEN INTERVAL '36 years' AND INTERVAL '55 years' AND gender = 'Male' THEN 'Adult Male'
+        WHEN AGE(date_of_birth) BETWEEN INTERVAL '36 years' AND INTERVAL '55 years' AND gender = 'Female' THEN 'Adult Female'
+        ELSE 'Other'
+    END AS age_gender_group
+FROM passengers;
+
+SELECT first_name,last_name,
+       case
+           when first_name ilike 'A%' then upper(first_name)
+           ELSE lower(first_name)
+       end as name_up_low
+FROM passengers;
+
+ALTER TABLE passengers
+    ADD CONSTRAINT age_at_least_10 CHECK (AGE(date_of_birth) >= INTERVAL '10 years');
+
+
+ALTER TABLE booking
+ADD CONSTRAINT price_check CHECK (price > 0 AND price <= 50000);
+
+ALTER TABLE baggage
+ADD CONSTRAINT weight_check CHECK (weight_in_kg BETWEEN 1 AND 100);
+
+ALTER TABLE airport
+ADD CONSTRAINT airport_name_length CHECK (LENGTH(airport_name) >= 10);
+
+ALTER TABLE airline
+ADD CONSTRAINT unique_airline_code UNIQUE (airline_code);
+
+ALTER TABLE airport
+ADD CONSTRAINT unique_airport_name UNIQUE (airport_name);
+
+ALTER TABLE baggage_check
+ADD CONSTRAINT unique_baggage_check_id UNIQUE (baggage_check_id);
+
+ALTER TABLE baggage
+ADD CONSTRAINT unique_baggage_id UNIQUE (baggage_id);
+
+ALTER TABLE boarding_pass
+ADD CONSTRAINT unique_boarding_pass_id UNIQUE (boarding_pass_id);
+
+ALTER TABLE booking_flight
+ADD CONSTRAINT unique_booking_flight_id UNIQUE (booking_flight_id);
+
+ALTER TABLE booking
+ADD CONSTRAINT unique_booking_id UNIQUE (booking_id);
+
+ALTER TABLE flights
+ADD CONSTRAINT unique_flight_no UNIQUE (flight_no);
+
+ALTER TABLE passengers
+ADD CONSTRAINT unique_passport_number UNIQUE (passport_number);
+
+ALTER TABLE security_check
+ADD CONSTRAINT unique_security_check_id UNIQUE (security_check_id);
